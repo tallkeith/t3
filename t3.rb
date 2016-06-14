@@ -4,13 +4,14 @@ board = [8,1,6,3,5,7,4,9,2]
 
 def greeting
   puts
-  puts "Welcome to Tic Tac Toe!"
-  puts "Try to get three in a row to win..."
+  puts "Welcome to Magic Square Tic Tac Toe!"
+  puts "Try to get three numbers that equal 15 to win..."
   puts
 end
 
 def show_board(board)
 	puts
+	puts "---------"
 	3.times do |row|
 		puts board[row * 3, 3].join(" | ")
 		puts "---------"
@@ -36,7 +37,7 @@ def comp_move(board)
 end
 
 def available_moves(board)
-	board.select { |piece| piece.is_a?(Fixnum)}
+	board.select { |piece| piece.is_a?(Fixnum) }
 end
 
 def magic_win?(moves)
@@ -47,22 +48,38 @@ def magic_win?(moves)
 	winner
 end
 
-def draw(board)
-	board.all? { |piece| piece.is_a?(String) }
+def draw(board, player_array)
+	board.all? { |piece| piece.is_a?(String) } && !magic_win?(player_array)
 end
 
 def game_over?(player_array, comp_array, board)
-	magic_win?(player_array) || magic_win?(comp_array) || draw(board)
+	magic_win?(player_array) || magic_win?(comp_array) || draw(board, player_array)
 end
 
-def finish_game(current_player, comp, player, board)
+def finish_game(current_player, comp, player, board, player_array)
 	show_board(board)
-	if draw(board)
+	if draw(board, player_array)
 		puts "Tie game"
 	elsif current_player == comp
 		puts "Congratulations, you win!"
 	else 
 		puts "You lose. Better luck next time"
+	end
+	play_again?
+end
+
+def play_again?
+	board = [8,1,6,3,5,7,4,9,2]
+	puts "Would you like to play again?"
+	choice = gets.chomp.downcase
+	until ["y", "n"].include?(choice)
+		puts "Please choose 'Y' or 'N'"
+		choice = gets.chomp.downcase
+	end
+	if choice == "y"
+		play_game(board)
+	else
+		puts "Thanks for checking out my game! I hope you had fun!"
 	end
 end
 
@@ -76,7 +93,7 @@ def play_game(board)
 	until game_over?(player_array, comp_array, board)
 		show_board(board)
 		if current_player == player
-			puts "Human Player's turn again"
+			puts "Human Player's turn"
 			choice = player_move(player_array, comp_array, board)
 			player_array.push(choice)
 		  spot = board.index(choice)
@@ -92,7 +109,7 @@ def play_game(board)
 			current_player = player
 		end	
 	end
-	finish_game(current_player, comp, player, board)
+	finish_game(current_player, comp, player, board, player_array)
 end
 
 play_game(board)
